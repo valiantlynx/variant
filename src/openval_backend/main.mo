@@ -123,5 +123,36 @@ actor OpenVal {
     };
     return listing.itemPrice;
   };
+//handle exchange between nft of buye and seller
+  public shared(msg) func completePurchase(id: Principal, ownerId: Principal, neOwnerId: Principal) : async Text {
+    var purchachedNFT : NFTActorClass.NFT = switch (mapOfNFTs.get(id)){
+      case null return "NFT does not exist";
+      case (?result) result;
+    };
+
+    let transferResult = await purchachedNFT.transferOwnership(neOwnerId);
+    if (transferResult == "Success"){
+      mapOfListings.delete(id);
+      //previous owner nfts list
+      var ownedNFTs : List.List<Principal> = switch (mapOfOwners.get(ownerId)){
+        case null List.nil<Principal>();
+        case (?result) result;
+      };
+
+      //filter() purchased nft from previous owner nfts list
+      //loop throug each list ite and check if any matches the id of purchasednft, doesnt returns true added to new list
+      ownedNFTs := List.filter(ownedNFTs, func (listItemId: Principal) : Bool {
+        return listItemId != id;
+      });
+
+      //add prurchased nft to new owners list
+      addToOwnershipMap(neOwnerId, id);
+      return "Success";
+
+    } else{
+      return transferResult;
+    }
+
+  }
 
 };

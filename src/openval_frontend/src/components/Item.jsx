@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import logo from "../../assets/logo.png";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { idlFactory } from "../../../declarations/nft";
+import { idlFactory as tokenIdlFactory } from "../../../declarations/token_backend";
 import { Principal } from "@dfinity/principal";
 import Button from "./Button";
 import { openval_backend } from "../../../declarations/openval_backend";
@@ -125,6 +126,26 @@ async function sellItem() {
 
 async function handleBuy() {
   console.log("Buy triggered");
+
+  //create actor to access the token_backend using the idlfactory.
+  const tokenActor = await Actor.createActor(tokenIdlFactory, {
+    agent,
+    canisterId: Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai"),
+  });
+
+  //get hold of the sellers Pincipal id
+  const sellerId = await openval_backend.getOriginalOwner(props.id);
+  const itemPrice = await openval_backend.getListedNFTPrice(props.id);
+
+  const result = await tokenActor.transfer(sellerId, itemPrice);
+  console.log(result);
+  if (result == "success"){
+    //Transfer ownership
+    const transferResult = await openval_backend.completePurchase(props.id, sellerId, CURRENT_USER_ID);
+    console.log("Purchase" + transferResult);
+  }
+
+
 }
 
   return (
