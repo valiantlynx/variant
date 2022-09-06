@@ -4,6 +4,10 @@
       "main": "src/openval_backend/main.mo",
       "type": "motoko"
     },
+    "nft": {
+      "main": "src/NFT/nft.mo",
+      "type": "motoko"
+    },
     "openval_frontend": {
       "dependencies": [
         "openval_backend"
