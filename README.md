@@ -161,7 +161,7 @@ dfx canister call openval_backend mint '(vec {137; 80; 78; 71; 13; 10; 26; 10; 0
 2. List the item into mapOfListings:
 
 ```
-dfx canister call openval_backend listItem '(principal "rno2w-sqaaa-aaaaa-aaacq-cai", 2)'
+dfx canister call openval_backend listItem '(principal "qaa6y-5yaaa-aaaaa-aaafa-cai", 2)'
 ```
 
 3. Get openval_backend canister ID:
@@ -173,7 +173,7 @@ dfx canister id openval_backend
 4. Transfer NFT to openval_backend:
 
 ```
-dfx canister call rno2w-sqaaa-aaaaa-aaacq-cai transferOwnership '(principal "ryjl3-tyaaa-aaaaa-aaaba-cai", true)'
+dfx canister call qaa6y-5yaaa-aaaaa-aaafa-cai transferOwnership '(principal "ryjl3-tyaaa-aaaaa-aaaba-cai", true)'
 ```
 
 # Conneting to the Token Canister

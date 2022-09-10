@@ -20,6 +20,7 @@ function Item(props) {
   const [blur, setBlur] = useState();
   const [sellStatus, setSellStatus] = useState("");
   const [priceLabel, setPriceLabel] = useState();
+  const [shouldDisplay, setDisplay] = useState(true);
 
   const id = props.id; //is a principal id
 
@@ -67,6 +68,7 @@ function Item(props) {
       }
     } else if (props.role == "discover"){
       const originalOwner = await openval_backend.getOriginalOwner(props.id);
+      setOwner(originalOwner.toText());
       if (originalOwner.toText() != CURRENT_USER_ID.toText()) {
         setButton(<Button handleClick={handleBuy} text={"Buy"}/>);
       }
@@ -123,33 +125,37 @@ async function sellItem() {
     }
   }
 }
-
+//handle buying tranfer procedure
 async function handleBuy() {
   console.log("Buy triggered");
+  setLoaderHidden(false);
 
   //create actor to access the token_backend using the idlfactory.
+  const valPrincipal = Principal.fromText("renrk-eyaaa-aaaaa-aaada-cai");
   const tokenActor = await Actor.createActor(tokenIdlFactory, {
     agent,
-    canisterId: Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai"),
+    canisterId: valPrincipal,
   });
 
   //get hold of the sellers Pincipal id
   const sellerId = await openval_backend.getOriginalOwner(props.id);
   const itemPrice = await openval_backend.getListedNFTPrice(props.id);
-
+  //transter val token for the nft
   const result = await tokenActor.transfer(sellerId, itemPrice);
   console.log(result);
   if (result == "success"){
-    //Transfer ownership
+    //Transfer ownership of nft
     const transferResult = await openval_backend.completePurchase(props.id, sellerId, CURRENT_USER_ID);
-    console.log("Purchase" + transferResult);
+    console.log("Purchase " + transferResult);
+    setLoaderHidden(true);
+    setDisplay(false);
   }
 
 
 }
 
   return (
-    <div className="disGrid-item">
+    <div style={{display: shouldDisplay ? "inline" : "none"}} className="disGrid-item">
       <div className="disPaper-root disCard-root makeStyles-root-17 disPaper-elevation1 disPaper-rounded">
         <img
           className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img"
