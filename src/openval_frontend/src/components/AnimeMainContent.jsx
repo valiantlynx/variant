@@ -14,7 +14,6 @@ function MainContent(props) {
                         required
                         value={props.search}
                         onChange={e => props.setSearch(e.target.value)} />
-
                 </form>
             </div>
             <div className="anime-list">

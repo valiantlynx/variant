@@ -21,8 +21,6 @@ function Gallery(props) {
     fetchNFTs();
   }, []);
 
- 
-
   return (
     <div className="gallery-view">
       <h3 className="makeStyles-title-99 Typography-h3" >{props.title}</h3>

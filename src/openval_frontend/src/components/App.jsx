@@ -14,7 +14,6 @@ function App() {
       <Header />
       {/* <Minter /> */}
       {/* <Item id={NFTID}/> */}
-      
       <Footer />
     </div>
   );

@@ -28,10 +28,6 @@ function Header() {
     getNFTs();
   }, []); 
 
- 
-    
-
-
   return (
     <HashRouter>
 

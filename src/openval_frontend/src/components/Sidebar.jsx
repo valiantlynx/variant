@@ -12,7 +12,6 @@ function Sidebar(props) {
                         key={anime.mal_id}
                     >{anime.title_english}</a>
                 ))}
-
             </nav>
         </aside>
     );
