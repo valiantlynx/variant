@@ -6,6 +6,7 @@ import Minter from "./Minter";
 import Gallery from "./Gallery";
 import { openval_backend } from "../../../declarations/openval_backend";
 import CURRENT_USER_ID from "../index";
+import Manga from "./Manga";
 
 
 function Header() {
@@ -55,6 +56,9 @@ function Header() {
             <button className="ButtonBase-root Button-root Button-text header-navButtons-3">
             <Link to="/collection">My NFTs</Link>
             </button>
+            <button className="ButtonBase-root Button-root Button-text header-navButtons-3">
+            <Link to="/manga">Manga</Link>
+            </button>
           </div>
         </header>
       </div>
@@ -62,6 +66,7 @@ function Header() {
         <Route exact path="/" element={<img className="bottom-space" src={homeImage} />} component={()=><HomeContainer/>}/>
         <Route path="/discover" element={listingGallery} />
         <Route path="/minter" element={<Minter />} />
+        <Route path="/manga" element={<Manga />} />
         <Route path="/collection" element={useOwnedGallery} />
       </Routes>
 

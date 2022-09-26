@@ -11,7 +11,7 @@ const init = async () => {
   const authClient = await AuthClient.create();
   
   //is already logged in within 8 days
-  if (authClient.isAuthenticated() && ((await authClient.getIdentity().getPrincipal().isAnonymous()) === false )){
+  if (authClient.isAuthenticated() || ((await authClient.getIdentity().getPrincipal().isAnonymous()) === false )){
     console.log("logged in");
     handleAuthenticated(authClient);
     
