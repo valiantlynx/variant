@@ -2,6 +2,16 @@ import React from "react";
 import AnimeCard from "./AnimeCard";
 
 function MainContent(props) {
+    function content() {
+        return (
+            props.animeList.map(content => (
+                <AnimeCard
+                    content={content}
+                    key={content.mal_id} />
+            ))
+        )
+
+    }
     return (
         <main>
             <div className="main-head">
@@ -17,11 +27,7 @@ function MainContent(props) {
                 </form>
             </div>
             <div className="anime-list">
-                {props.animeList.map(anime => (
-                    <AnimeCard 
-                        anime={anime}
-                        key={anime.mal_id}/>
-                ))}
+                {content()}
             </div>
         </main>
     );

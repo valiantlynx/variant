@@ -16,6 +16,7 @@ function Anime() {
         //console.log(temp);
 
         setTopAnime(temp.data.slice(0, 5));
+        setAnimeList(temp.data);
     }
     useEffect(() => {
         getTopAnime();
@@ -44,7 +45,7 @@ function Anime() {
         <div className="App">
             <div className="content-wrap">
                 <Sidebar
-                    topAnime={topAnime} />
+                    topContent={topAnime} />
                 <AnimeMainContent 
                     handleSearch={handleSearch} 
                     search={search}

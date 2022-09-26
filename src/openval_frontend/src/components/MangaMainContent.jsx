@@ -12,7 +12,6 @@ function MainContent(props) {
         )
 
     }
-
     return (
         <main>
             <div className="main-head">
