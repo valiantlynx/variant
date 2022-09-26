@@ -1,5 +1,6 @@
 import React from "react";
 function Sidebar(props) {
+
     console.log(props.topContent);
 
     function content() {
