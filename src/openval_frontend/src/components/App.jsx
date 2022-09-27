@@ -5,15 +5,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Item from "./Item";
 import Minter from "./Minter";
 
-function App() {
+function App(props) {
 
+  console.log(props.currentUser)
   // const NFTID = "rrkah-fqaaa-aaaaa-aaaaq-cai";
 
   return (
     <div className="App">
       <Header />
-      {/* <Minter /> */}
-      {/* <Item id={NFTID}/> */}
+      {/* <Minter />
+      <Item id={NFTID}/> */}
       <Footer />
     </div>
   );

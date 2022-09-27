@@ -54,6 +54,7 @@ module.exports = {
     minimize: !isDevelopment,
     minimizer: [new TerserPlugin()],
   },
+ 
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
     fallback: {

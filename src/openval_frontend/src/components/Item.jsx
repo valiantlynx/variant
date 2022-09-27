@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../assets/logo.png";
+import { AuthClient } from '@dfinity/auth-client';
 import { Actor, HttpAgent } from "@dfinity/agent";
-import { idlFactory } from "../../../declarations/nft";
+import { idlFactory, canisterId, createActor } from "../../../declarations/nft";
 import { idlFactory as tokenIdlFactory } from "../../../declarations/token_backend";
 import { Principal } from "@dfinity/principal";
 import Button from "./Button";
@@ -24,23 +25,35 @@ function Item(props) {
 
   const id = props.id; //is a principal id
 
- //the nft.mo canister is its own canister så instead of simply simply importing it and using its function, we have to send an http request to  it.
- // remember our main.mo(openval_backend) is our canister that we can just import
-  const localHost = "http://localhost:8080/";
-  const agent = new HttpAgent({host: localHost});
+  //the nft.mo canister is its own canister så instead of simply simply importing it and using its function, we have to send an http request to  it.
+  // remember our main.mo(openval_backend) is our canister that we can just import
+  // const localHost = "http://localhost:8080/";
+  // const agent = new HttpAgent({ host: localHost });
 
-  //for working locally: TODO: when deploy live, remove the following line agent is configured to work with a hardcodded live rootkey.
-  agent.fetchRootKey();
+  // //for working locally: TODO: when deploy live, remove the following line agent is configured to work with a hardcodded live rootkey.
+  // agent.fetchRootKey();
   let NFTActor;
-  
+
   //load the nft from data to human visible image.
-  async function loadNft(){
-    //access the nft
-    NFTActor = await Actor.createActor(idlFactory, {
-      agent,
-      canisterId: id
-    });
+  async function loadNft() {
     
+    const authClient = await AuthClient.create();
+    const identity = await authClient.getIdentity();
+    console.log(identity.getPrincipal().toText());
+
+    NFTActor = createActor(canisterId, {
+      agentOptions: {
+        identity,
+      },
+    });
+    //console.log(NFTActor);
+
+    // //access the nft
+    // NFTActor = await Actor.createActor(idlFactory, {
+    //   agent,
+    //   canisterId: id
+    // });
+
     //set name
     const name = await NFTActor.getName();
     setName(name);
@@ -51,36 +64,36 @@ function Item(props) {
     const imageData = await NFTActor.getAsset();
     const imageContent = new Uint8Array(imageData);
     const image = URL.createObjectURL(
-      new Blob([imageContent.buffer], {type: "image/png" })
+      new Blob([imageContent.buffer], { type: "image/png" })
     );
     setImage(image);
 
-      //if the nft is a collection or discover
-    if (props.role == "collection"){
+    //if the nft is a collection or discover
+    if (props.role == "collection") {
       //if nft is listed
       const nftIsListed = await openval_backend.isListed(props.id);
-      if(nftIsListed){
-        setOwner("OpenVal"); 
-        setBlur({filter: "blur(4px"})
+      if (nftIsListed) {
+        setOwner("OpenVal");
+        setBlur({ filter: "blur(4px" })
         setSellStatus("Listed");
       } else {
-        setButton(<Button handleClick={handleSell} text={"Sell"}/>);
+        setButton(<Button handleClick={handleSell} text={"Sell"} />);
       }
-    } else if (props.role == "discover"){
+    } else if (props.role == "discover") {
       const originalOwner = await openval_backend.getOriginalOwner(props.id);
       setOwner(originalOwner.toText());
       if (originalOwner.toText() != CURRENT_USER_ID.toText()) {
-        setButton(<Button handleClick={handleBuy} text={"Buy"}/>);
+        setButton(<Button handleClick={handleBuy} text={"Buy"} />);
       }
 
       //check price of the nft
       const price = await openval_backend.getListedNFTPrice(props.id);
       console.log(price)
-      setPriceLabel(<PriceLabel sellPrice={price.toString()}/>);
-      
+      setPriceLabel(<PriceLabel sellPrice={price.toString()} />);
+
     }
 
-    
+
   }
 
   //to define where and how many  times we call the function we use the useEffect hook. the second parameter is for how many times to call the fuction.
@@ -90,72 +103,84 @@ function Item(props) {
   }, [])
 
 
-//handle sell on click cormfirm sell button  
-let price;
-function handleSell() {
-  console.log("sell");
-  setPrice(<input
-    placeholder="Price in DANG"
-    type="number"
-    className="price-input"
-    value={price}
-    onChange={(e) => price=e.target.value}
-  />);
-  setButton(<Button handleClick={sellItem} text={"Cormfirm"} />);
-  
-}
+  //handle sell on click cormfirm sell button  
+  let price;
+  function handleSell() {
+    console.log("sell");
+    setPrice(<input
+      placeholder="Price in DANG"
+      type="number"
+      className="price-input"
+      value={price}
+      onChange={(e) => price = e.target.value}
+    />);
+    setButton(<Button handleClick={sellItem} text={"Cormfirm"} />);
 
-//list item for sale on the openval canister
-async function sellItem() {
-  setBlur({filter: "blur(4px"})
-  setLoaderHidden(false);
-  console.log("Sold at set price = " +  price)
-  const listingResult = await openval_backend.listItem(props.id, Number(price));
-  console.log("Listing: " + listingResult);
-  if (listingResult == "success") {
-    const openvalId = await openval_backend.getOpenValCanisterID(); 
-    const transferResults = await NFTActor.transferOwnership(openvalId);
-    console.log("transfer: " + transferResults);
-    if (transferResults == "Success") {
-      setLoaderHidden(true);
-      setButton();
-      setPrice();
-      setOwner("OpenVal");    
-      setSellStatus("Listed");  
+  }
+
+  //list item for sale on the openval canister
+  async function sellItem() {
+    setBlur({ filter: "blur(4px" })
+    setLoaderHidden(false);
+    console.log("Sold at set price = " + price)
+
+    const authClient = await AuthClient.create();
+    const identity = await authClient.getIdentity();
+    console.log(identity.getPrincipal().toText());
+
+    const authenticatedCanister = createActor(canisterId, {
+      agentOptions: {
+        identity,
+      },
+    });
+    console.log(authenticatedCanister);
+
+    const listingResult = await authenticatedCanister.listItem(props.id, Number(price));
+    console.log("Listing: " + listingResult);
+    if (listingResult == "success") {
+      const openvalId = await openval_backend.getOpenValCanisterID();
+      const transferResults = await NFTActor.transferOwnership(openvalId);
+      console.log("transfer: " + transferResults);
+      if (transferResults == "Success") {
+        setLoaderHidden(true);
+        setButton();
+        setPrice();
+        setOwner("OpenVal");
+        setSellStatus("Listed");
+      }
     }
   }
-}
-//handle buying tranfer procedure
-async function handleBuy() {
-  console.log("Buy triggered");
-  setLoaderHidden(false);
+  //handle buying tranfer procedure
+  async function handleBuy() {
+    console.log("Buy triggered");
+    setLoaderHidden(false);
 
-  //create actor to access the token_backend using the idlfactory.
-  const valPrincipal = Principal.fromText("renrk-eyaaa-aaaaa-aaada-cai");
-  const tokenActor = await Actor.createActor(tokenIdlFactory, {
-    agent,
-    canisterId: valPrincipal,
-  });
+    //create actor to access the token_backend using the idlfactory.
+    const valPrincipal = Principal.fromText("eiyyo-xaaaa-aaaak-acsbq-cai");
+    const tokenActor = await Actor.createActor(tokenIdlFactory, {
+      agent,
+      canisterId: valPrincipal,
+    });
 
-  //get hold of the sellers Pincipal id
-  const sellerId = await openval_backend.getOriginalOwner(props.id);
-  const itemPrice = await openval_backend.getListedNFTPrice(props.id);
-  //transter val token for the nft
-  const result = await tokenActor.transfer(sellerId, itemPrice);
-  console.log(result);
-  if (result == "success"){
-    //Transfer ownership of nft
-    const transferResult = await openval_backend.completePurchase(props.id, sellerId, CURRENT_USER_ID);
-    console.log("Purchase " + transferResult);
-    setLoaderHidden(true);
-    setDisplay(false);
+    //get hold of the sellers Pincipal id
+    const sellerId = await openval_backend.getOriginalOwner(props.id);
+    const itemPrice = await openval_backend.getListedNFTPrice(props.id);
+    //transter val token for the nft
+    const result = await tokenActor.transfer(sellerId, itemPrice);
+    console.log(result);
+    if (result == "success") {
+      //Transfer ownership of nft
+      const transferResult = await openval_backend.completePurchase(props.id, sellerId, CURRENT_USER_ID);
+      console.log("Purchase " + transferResult);
+      setLoaderHidden(true);
+      setDisplay(false);
+    }
+
+
   }
 
-
-}
-
   return (
-    <div style={{display: shouldDisplay ? "inline" : "none"}} className="disGrid-item">
+    <div style={{ display: shouldDisplay ? "inline" : "none" }} className="disGrid-item">
       <div className="disPaper-root disCard-root makeStyles-root-17 disPaper-elevation1 disPaper-rounded">
         <img
           className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img"

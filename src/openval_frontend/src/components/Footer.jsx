@@ -14,12 +14,12 @@ function Footer() {
             <Col>
               <p>
                 The Internet Computer's largest digital marketplace for crypto
-                collectibles and non-fungible tokens (NFTs). Buy, sell, and
-                discover exclusive digital items.
+                collectibles, anime, manga and non-fungible tokens (NFTs). Buy, sell, and
+                discover exclusive digital items. Are you a creator make your art worth something?
               </p>
             </Col>
             <Col>
-              <p>Copyright ⓒ {year}</p>
+              <p>Copyright ⓒ {year} Valiantlynx</p>
             </Col>
           </Row>
         </Container>
