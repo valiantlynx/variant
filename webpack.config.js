@@ -37,7 +37,7 @@ const canisterEnvVariables = initCanisterEnv();
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-const frontendDirectory = "openval_frontend";
+const frontendDirectory = "variant_frontend";
 
 const frontend_entry = path.join("src", frontendDirectory, "src", "index.html");
 
@@ -54,7 +54,6 @@ module.exports = {
     minimize: !isDevelopment,
     minimizer: [new TerserPlugin()],
   },
- 
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
     fallback: {
@@ -78,18 +77,8 @@ module.exports = {
   module: {
    rules: [
      { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
-     { test: /\.css$/, use: ['style-loader','css-loader'] }, {
-      test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
-      use: [
-        {
-          loader: 'url-loader?limit=100000',
-          options: {
-            limit: 100000
-          },
-        },
-      ],
-    },
-   ],
+     { test: /\.css$/, use: ['style-loader','css-loader'] }
+   ]
   },
   plugins: [
     new HtmlWebpackPlugin({

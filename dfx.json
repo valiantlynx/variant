@@ -1,23 +1,19 @@
 {
   "canisters": {
-    "openval_backend": {
-      "main": "src/openval_backend/main.mo",
+    "variant_backend": {
+      "main": "src/variant_backend/main.mo",
       "type": "motoko"
     },
-    "nft": {
-      "main": "src/NFT/nft.mo",
-      "type": "motoko"
-    },
-    "openval_frontend": {
+    "variant_frontend": {
       "dependencies": [
-        "openval_backend"
+        "variant_backend"
       ],
       "frontend": {
-        "entrypoint": "src/openval_frontend/src/index.html"
+        "entrypoint": "src/variant_frontend/src/index.html"
       },
       "source": [
-        "src/openval_frontend/assets",
-        "dist/openval_frontend/"
+        "src/variant_frontend/assets",
+        "dist/variant_frontend/"
       ],
       "type": "assets"
     }
