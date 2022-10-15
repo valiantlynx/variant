@@ -8,7 +8,7 @@ function App(props) {
 
   return (
     <div id="screen">
-      <Header />
+      <Header currentPrincipalID={props.loggedInPrincipal}/>
       <Faucet userPrincipal={props.loggedInPrincipal}/>
       <Balance />
       <Transfer />

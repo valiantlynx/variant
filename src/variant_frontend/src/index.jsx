@@ -3,8 +3,10 @@ import React from 'react'
 import App from "./components/App";
 import { AuthClient } from '@dfinity/auth-client';
 import { Actor, HttpAgent } from "@dfinity/agent";
+import Button from './components/Button';
 
-const init = async () => { 
+const init = async () => {
+
   const authClient = await AuthClient.create();
 
   // //must remove before deploying live
@@ -12,31 +14,50 @@ const init = async () => {
   // const agent = new HttpAgent({host: localHost});
   // agent.fetchRootKey();
 
-  // handleAuthenticated(authClient);
 
-  //is already logged in within 8 days
-  if (authClient.isAuthenticated() && ((await authClient.getIdentity().getPrincipal().isAnonymous()) === false )){
+
+
+  //if user is already logged in within 8 days
+  if (authClient.isAuthenticated() && ((await authClient.getIdentity().getPrincipal().isAnonymous()) === false)) {
     console.log("logged in");
     handleAuthenticated(authClient);
-    
+
   } else {
-    //log in
+    // handleAuthenticated(authClient);
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(
+
+      <div className="blue window container" id="not-logged">
+        <center>
+          <h1>Internet Identity Client</h1>
+          <h2 style={{ color: '#ff9966' }} >You are not authenticated</h2>
+          <p>To log in, click this button!</p>
+          <Button handleClick={login} text={"login"} />
+        </center>
+
+      </div>
+    );
+  }
+
+  //logging in
+  async function login() {
     await authClient.login({
       identityProvider: "https://identity.ic0.app/#authorize",
-      onSuccess : () => {
+      onSuccess: () => {
         handleAuthenticated(authClient);
-      }
+      },
+
     });
+
   }
+
 }
 
-async function handleAuthenticated(authClient){
-  console.log(authClient.getIdentity());
+async function handleAuthenticated(authClient) {
   const identity = await authClient.getIdentity();
   const userPrincipal = identity.getPrincipal().toString();
-  console.log(userPrincipal);
   const root = ReactDOM.createRoot(document.getElementById("root"));
-  root.render(<App loggedInPrincipal={userPrincipal}/>);
+  root.render(<App loggedInPrincipal={userPrincipal} />);
 }
 
 init();

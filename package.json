@@ -2,7 +2,12 @@
   "name": "variant_frontend",
   "version": "0.1.0",
   "description": "Internet Computer starter application",
-  "keywords": ["Internet Computer", "Motoko", "JavaScript", "Canister"],
+  "keywords": [
+    "Internet Computer",
+    "Motoko",
+    "JavaScript",
+    "Canister"
+  ],
   "scripts": {
     "build": "webpack",
     "prebuild": "npm run copy:types",
@@ -14,8 +19,8 @@
     "@dfinity/agent": "0.13.3",
     "@dfinity/candid": "0.13.3",
     "@dfinity/principal": "0.13.3",
-    "@mui/material": "5.9.1",
     "@mui/icons-material": "5.8.4",
+    "@mui/material": "5.9.1",
     "assert": "2.0.0",
     "buffer": "6.0.3",
     "copy-webpack-plugin": "^10.2.4",
@@ -43,14 +48,15 @@
     "last 2 edge version"
   ],
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
     "@dfinity/auth-client": "^0.13.3",
     "@dfinity/authentication": "^0.13.3",
     "@dfinity/identity": "^0.13.3",
     "lit-html": "^1.4.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
     "ts-loader": "^9.2.3",
-    "typescript": "^4.3.5"
-}
+    "typescript": "^4.3.5",
+    "url-loader": "^4.1.1"
+  }
 }
